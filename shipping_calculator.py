@@ -324,7 +324,7 @@ entryH.bind("<FocusOut>", clear_entry_h)
 # clearButton.bind("<1>", clear_all_entry)       # This is supposed to set focus to result box
 c_button.bind("<1>", button_clear)
 result_box.bind("<FocusIn>", warning_message_f)
-gi
+
 
 if __name__ == "__main__":
     run_calculator()
