@@ -139,11 +139,6 @@ def clear_all_entry():
     ratchet += 1
 
 
-
-
-
-
-
 def shipping_k_clear_result(event):
     result_box.delete(0, END)
 
@@ -311,9 +306,6 @@ calcShipping = Button(buttonsFrame, text='Calculate\nShipping', bg="green", comm
 calcShipping.grid(row=3, column=2, sticky="nsew")
 
 
-# def print_hi(event):
-#     print("hi")
-
 #   All event bindings
 entryL.bind("<FocusIn>", clear_entry_l)
 entryL.bind("<FocusOut>", clear_entry_l)
@@ -332,8 +324,7 @@ entryH.bind("<FocusOut>", clear_entry_h)
 # clearButton.bind("<1>", clear_all_entry)       # This is supposed to set focus to result box
 c_button.bind("<1>", button_clear)
 result_box.bind("<FocusIn>", warning_message_f)
-
-# print(f"module namme is {__name__}")
+gi
 
 if __name__ == "__main__":
     run_calculator()
