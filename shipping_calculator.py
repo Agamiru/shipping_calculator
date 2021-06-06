@@ -1,10 +1,17 @@
 from tkinter import *
 
+"""
+A simple Volumetric Weight calculator, mostly used in the shipping/freight industry.
+Basically box dimensions, Length, Width, and Height (all in inches) are given along with a
+shipping constant (usually unique to the shipping/freight company) and the
+volumetric weight of the item is calculated and returned using the provided values.  
+"""
+
 # Loading the main window
 
 mainWindow = Tk()
 mainWindow.title("Shipping Calculator")
-mainWindow.geometry("330x350+900+150")
+mainWindow.geometry("330x350+800+150")
 mainWindow["padx"] = 10
 mainWindow["pady"] = 5
 
@@ -19,6 +26,7 @@ result_box.grid(row=1, column=0, rowspan=1, sticky="nsew")
 
 inputFrame = Frame(mainWindow, relief="sunken", borderwidth=1)
 
+
 #   Configuring inputFrame rows and columns
 for col_num in range(0, 5):
     inputFrame.columnconfigure(col_num, minsize=50)
@@ -28,6 +36,7 @@ inputFrame.rowconfigure(0, minsize=3)
 inputFrame.rowconfigure(2, minsize=5)
 
 inputFrame.grid(row=3, column=0, columnspan=5, rowspan=5, sticky="ew")
+
 
 # Creating entry boxes for Length, Width and Height
 
@@ -45,25 +54,30 @@ entryL.grid(row=1, column=0)
 entryW.grid(row=1, column=2)
 entryH.grid(row=1, column=4)
 
-inputLabel_IN1 = Label(inputFrame, text=" In", fg="red")
+# Set aliases for entry boxes
+setattr(entryL, "alias", "L")
+setattr(entryW, "alias", "W")
+setattr(entryH, "alias", "H")
+
+inputLabel_IN1 = Label(inputFrame, text=' in', fg="red")
 inputLabel_IN1.grid(row=1, column=1, sticky="w")
 
-inputLabel_IN2 = Label(inputFrame, text=" In", fg="red")
+inputLabel_IN2 = Label(inputFrame, text=' in', fg="red")
 inputLabel_IN2.grid(row=1, column=3, sticky="w")
 
-inputLabel_IN3 = Label(inputFrame, text=" In", fg="red")
+inputLabel_IN3 = Label(inputFrame, text=' in', fg="red")
 inputLabel_IN3.grid(row=1, column=5, sticky="w")
 
-# radio_lbs = Radiobutton(inputFrame, text="lbs")
-# radio_lbs.grid(row=1, column=0, sticky="w")
+
 c_button = Button(inputFrame, text="C")
 c_button.grid(row=3, column=0, sticky="ew")
 
-radio_cm = Radiobutton(inputFrame, text="cm")
-radio_cm.grid(row=3, column=2, sticky="w")
 
 shippingConstant_entry = Entry(inputFrame, width=8)
 shippingConstant_entry.grid(row=3, column=3)
+
+# set alias for shipping constant entry box
+setattr(shippingConstant_entry, "alias", "Constant")
 
 shippingConstant_label = Label(inputFrame, text="  shipping\n  constant", fg="blue", anchor=CENTER)
 shippingConstant_label.grid(row=3, column=4, sticky="w")
@@ -85,20 +99,25 @@ buttonsFrame.grid(row=8, column=0, rowspan=4, columnspan=3, sticky="nsew")
 
 numeric = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]
 
-warning_message = ["Please select a box below",
-                   "Please input a number"]
+warning_messages = [
+    "Please select a box below",
+    "Please input a number",
+    "Entry '%s' contains an non-digit",
+    "'%s' cannot be Zero",
+]
 
-#   Functions for clearing entry
 
-
+#   Functions for clearing entry, based on events
+#   Event type 9 = FocusIn, type 10 = FocusOut
 def clear_entry_l(event):
     entry_text = entryL.get()
     if "L" in entry_text:
-        entryL.delete(0, END)
+        if event.type == str(9):    # has focus
+            entryL.delete(0, END)
+            result_box.delete(0, END)
+        pass
     elif len(entry_text) == 0:
         entryL.insert(0, "L")
-    elif ratchet == 0:
-        entryL.delete(0, END)
     else:
         result_box.delete(0, END)
 
@@ -106,11 +125,12 @@ def clear_entry_l(event):
 def clear_entry_w(event):
     entry_text = entryW.get()
     if "W" in entry_text:
-        entryW.delete(0, END)
+        if event.type == str(9):    # has focus
+            entryW.delete(0, END)
+            result_box.delete(0, END)
+        pass
     elif len(entry_text) == 0:
         entryW.insert(0, "W")
-    elif ratchet == 0:
-        entryW.delete(0, END)
     else:
         result_box.delete(0, END)
 
@@ -118,75 +138,100 @@ def clear_entry_w(event):
 def clear_entry_h(event):
     entry_text = entryH.get()
     if "H" in entry_text:
-        entryH.delete(0, END)
+        if event.type == str(9):    # has focus
+            entryH.delete(0, END)
+            result_box.delete(0, END)
+        pass
     elif len(entry_text) == 0:
         entryH.insert(0, "H")
-    elif ratchet == 0:
-        entryH.delete(0, END)
     else:
         result_box.delete(0, END)
 
 
+def clear_entry_no_event(entry_alias: str):
+    names = {
+        "L": entryL, "W": entryW, "H": entryH
+    }
+    widget = names[entry_alias]
+    entry_text = widget.get()
+
+    if widget.alias == entry_text:
+        pass
+    elif len(entry_text) == 0:
+        widget.insert(0, widget.alias)
+    else:
+        widget.delete(0, END)
+        widget.insert(0, widget.alias)
+
+
 def clear_all_entry():
-    global ratchet
-    ratchet = 0
-    global clank
-    clank = ratchet
-    entryL.focus_set()
-    entryW.focus_set()
-    entryH.focus_set()
-    shippingConstant_entry.focus_set()
-    ratchet += 1
-
-
-def shipping_k_clear_result(event):
+    clear_entry_no_event("L")
+    clear_entry_no_event("W")
+    clear_entry_no_event("H")
     result_box.delete(0, END)
+    # Direct focus to a non focusable widget, makes all focusable widget lose focus
+    mainWindow.focus()
 
 
 def warning_message_f(event):
-    result_box.insert(0, warning_message[0])
+    result_box.insert(0, warning_messages[0])
 
 
 def calculate_shipping():
+    result_box.delete(0, END)
     length = (entryL.get())
     width = (entryW.get())
     height = (entryH.get())
     constant = (shippingConstant_entry.get())
 
-    culprits = {
-        "L": "L",
-        "W": "W",
-        "H": "H",
-        "": "Constant"
-    }
+    culprits = ("L", "W", "H")
 
     entry_list = [length, width, height, constant]
     error_messages = []
 
     # Check for valid input
+    idx = 0
     for entry in entry_list:
         # Looking for L,W,H in entry boxes
-        if entry in culprits.keys():
-            error_messages.append(culprits[entry])
-            # Test to see the new error message
-            print(error_messages)
+        if idx > 2:     # Condition out constant first
+            if entry == "":
+                error_messages.append("Constant")
+        else:
+            if entry in culprits or entry == "":
+                error_messages.append(culprits[idx])
+
+        idx += 1
 
     if error_messages:
-        result_box.delete(0, END)
         formatted_messages = ", ".join(error_messages).rstrip(',')
         readable_error_message = f"Please enter {formatted_messages}"
         result_box.insert(0, readable_error_message)
 
         return
 
-    result_box.delete(0, END)
-    volumetric_weight = (int(length) * int(width) * int(height)) // int(constant)
+    # Check for non digits or zeros
+    values = {length: entryL, width: entryW, height: entryH, constant: shippingConstant_entry}
+    l_w_h_c_list = []
+    for val, widget in values.items():
+        try:
+            _val = float(val)
+            if _val <= 0:
+                result_box.insert(0, warning_messages[3] % widget.alias)
+                return
+            l_w_h_c_list.append(_val)
+        except ValueError:
+            result_box.insert(0, warning_messages[2] % widget.alias)
+            return
+
+    length, width, height, constant = l_w_h_c_list
+    volumetric_weight = length * width * height // constant
     result_box.insert(0, str(volumetric_weight) + " Kg")
 
+
 #   Function for inserting numbers
-
-
 def button_click(number):
+    result_box.delete(0, END)
+
     # Storing the names of the widget in focus
     entry_l_info = ".!frame2.!entry"
     entry_w_info = ".!frame2.!entry2"
@@ -199,31 +244,28 @@ def button_click(number):
 
     # Condition for placing numbers in the right widget
     if widget_focus == entry_l_info:
-        # print("in first widget")
         current_l = entryL.get()
         entryL.delete(0, END)
         entryL.insert(0, str(current_l) + str(number))
     elif widget_focus == entry_w_info:
-        # print("in second widget")
         current_w = entryW.get()
         entryW.delete(0, END)
         entryW.insert(0, str(current_w) + str(number))
     elif widget_focus == entry_h_info:
-        # print("in third widget")
         current_h = entryH.get()
         entryH.delete(0, END)
         entryH.insert(0, str(current_h) + str(number))
     elif widget_focus == shipping_constant_info:
-        # print("in fourth widget")
         current_shipping_constant = shippingConstant_entry.get()
         shippingConstant_entry.delete(0, END)
         shippingConstant_entry.insert(0, str(current_shipping_constant) + str(number))
     else:
         # warning_message = "Please select a box below"
         result_box.delete(0, END)
-        result_box.insert(0, warning_message[0])
+        result_box.insert(0, warning_messages[0])
 
 
+#   The "C" button
 def button_clear(event):
     # Storing the names of the widget in focus
     entry_l_info = ".!frame2.!entry"
@@ -232,30 +274,23 @@ def button_clear(event):
     shipping_constant_info = ".!frame2.!entry4"
 
     widget_focus = str(mainWindow.focus_get())
-    # print(widget_focus)
 
     # Condition for clearing numbers in the right widget
     if widget_focus == entry_l_info:
-        # print("in first widget")
-        # entryL.get()
         entryL.delete(len(entryL.get()) - 1)
 
     elif widget_focus == entry_w_info:
-        # print("in second widget")
         entryW.delete(len(entryW.get()) - 1)
 
     elif widget_focus == entry_h_info:
-        # print("in third widget")
-
         entryH.delete(len(entryH.get()) - 1)
 
     elif widget_focus == shipping_constant_info:
-        # print("in fourth widget")
         shippingConstant_entry.delete(len(shippingConstant_entry.get()) - 1)
 
     else:
         result_box.delete(0, END)
-        result_box.insert(0, warning_message[0])
+        result_box.insert(0, warning_messages[0])
 
 
 def run_calculator():
@@ -317,13 +352,7 @@ entryW.bind("<FocusOut>", clear_entry_w)
 entryH.bind("<FocusIn>", clear_entry_h)
 entryH.bind("<FocusOut>", clear_entry_h)
 
-# mainWindow.bind("<FocusIn>", print_hi)    # Check to see if its the mainWindow that gets focus on start up
-
-# shippingConstant_entry.bind("<FocusIn>", shipping_k_clear_result)
-
-# clearButton.bind("<1>", clear_all_entry)       # This is supposed to set focus to result box
 c_button.bind("<1>", button_clear)
-result_box.bind("<FocusIn>", warning_message_f)
 
 
 if __name__ == "__main__":
