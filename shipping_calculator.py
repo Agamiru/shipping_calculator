@@ -227,8 +227,8 @@ def calculate_shipping():
 
     print(l_w_h_c_list)
     length, width, height, constant = l_w_h_c_list
-    volumetric_weight = length * width * height // constant
-    result_box.insert(0, str(volumetric_weight) + " Kg")
+    volumetric_weight = (length * width * height) / constant
+    result_box.insert(0, str(round(volumetric_weight)) + " Kg")
 
 
 #   Function for inserting numbers
