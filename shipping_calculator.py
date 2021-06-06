@@ -11,7 +11,7 @@ volumetric weight of the item is calculated and returned using the provided valu
 
 mainWindow = Tk()
 mainWindow.title("Shipping Calculator")
-mainWindow.geometry("330x350+800+150")
+mainWindow.geometry("330x350+1500+150")
 mainWindow["padx"] = 10
 mainWindow["pady"] = 5
 
@@ -210,9 +210,12 @@ def calculate_shipping():
         return
 
     # Check for non digits or zeros
-    values = {length: entryL, width: entryW, height: entryH, constant: shippingConstant_entry}
+    val_widget = {
+        length: entryL, width: entryW, height: entryH, constant: shippingConstant_entry,
+    }
+    print(f"values: {val_widget}")
     l_w_h_c_list = []
-    for val, widget in values.items():
+    for val, widget in val_widget.items():
         try:
             _val = float(val)
             if _val <= 0:
@@ -223,6 +226,7 @@ def calculate_shipping():
             result_box.insert(0, warning_messages[2] % widget.alias)
             return
 
+    print(l_w_h_c_list)
     length, width, height, constant = l_w_h_c_list
     volumetric_weight = length * width * height // constant
     result_box.insert(0, str(volumetric_weight) + " Kg")
@@ -240,7 +244,7 @@ def button_click(number):
 
     # focus_get() function helps us retrieve the id of widget in focus
     widget_focus = str(mainWindow.focus_get())
-    print(widget_focus)
+    # print(widget_focus)
 
     # Condition for placing numbers in the right widget
     if widget_focus == entry_l_info:
