@@ -2,7 +2,7 @@ from tkinter import *
 
 """
 A simple Volumetric Weight calculator, mostly used in the shipping/freight industry.
-Basically box dimensions, Length, Width, and Height (all in inches) are given along with a
+Basically, box dimensions (length, width, and height), all in inches, are given along with a
 shipping constant (usually unique to the shipping/freight company) and the
 volumetric weight of the item is calculated and returned using the provided values.  
 """
