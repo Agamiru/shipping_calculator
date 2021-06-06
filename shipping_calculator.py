@@ -225,7 +225,6 @@ def calculate_shipping():
             result_box.insert(0, warning_messages[2] % widget.alias)
             return
 
-    print(l_w_h_c_list)
     length, width, height, constant = l_w_h_c_list
     volumetric_weight = (length * width * height) / constant
     result_box.insert(0, str(round(volumetric_weight)) + " Kg")
