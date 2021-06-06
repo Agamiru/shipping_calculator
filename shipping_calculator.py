@@ -11,7 +11,7 @@ volumetric weight of the item is calculated and returned using the provided valu
 
 mainWindow = Tk()
 mainWindow.title("Shipping Calculator")
-mainWindow.geometry("330x350+1500+150")
+mainWindow.geometry("330x350+800+150")
 mainWindow["padx"] = 10
 mainWindow["pady"] = 5
 
@@ -213,7 +213,6 @@ def calculate_shipping():
     val_widget = {
         length: entryL, width: entryW, height: entryH, constant: shippingConstant_entry,
     }
-    print(f"values: {val_widget}")
     l_w_h_c_list = []
     for val, widget in val_widget.items():
         try:
