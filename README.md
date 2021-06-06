@@ -6,9 +6,7 @@ A simple volumetric weight calculator with GUI.
 
 This calculator is mostly used in the shipping/freight industry.
 
-Basically, box dimensions (length, width, and height), all in inches, are given along with a
-
-shipping constant (usually unique to the shipping/freight company) and the
+Basically, box dimensions (length, width, and height), all in inches, are given along with a shipping constant (usually unique to the shipping/freight company) and the
 
 volumetric weight of the item is calculated and returned using the provided values.
 
